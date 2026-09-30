@@ -1,0 +1,7 @@
+/* =================================================
+   STEM SPLITTER SPECIFIC STYLES
+================================================= */
+
+.card-drums-border  { border-left: 4px solid #f59e0b !important; }
+.card-bass-border   { border-left: 4px solid #10b981 !important; }
+.card-other-border  { border-left: 4px solid #8b5cf6 !important; }

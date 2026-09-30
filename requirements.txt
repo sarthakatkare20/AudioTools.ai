@@ -1,0 +1,15 @@
+# Core backend
+flask==3.0.0
+
+# Audio processing & FFmpeg fallback
+pydub==0.25.1
+soundfile==0.12.1
+imageio-ffmpeg>=0.4.9
+
+# AI / ML (PINNED for stability)
+torch==2.1.2
+torchaudio==2.1.2
+demucs==4.0.1
+
+# NumPy (VERY IMPORTANT: Demucs compatible)
+numpy==1.26.4

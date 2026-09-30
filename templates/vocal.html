@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Vocal Remover • AudioTools.ai</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Remove vocals from any song and get a high-quality instrumental.">
+  <link rel="icon" type="image/png" href="{{ url_for('static', filename='favicon.png') }}">
+
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/home.css') }}?v=5">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/vocal.css') }}?v=5">
+  <script src="https://unpkg.com/wavesurfer.js"></script>
+</head>
+
+<body>
+
+  <!-- ORGANIC FLOWING BACKGROUND WAVES -->
+  <div class="bg-wave-container">
+    <svg class="wave-svg" viewBox="0 0 1440 600" fill="none" xmlns="http://www.w3.org/2000/svg"
+      preserveAspectRatio="none">
+      <path d="M-100 200 C 250 80, 450 320, 800 180 C 1100 70, 1300 280, 1600 150 L 1600 0 L -100 0 Z"
+        fill="url(#wave-gradient-1)" opacity="0.45" />
+      <path d="M-100 280 C 300 180, 600 380, 950 220 C 1200 120, 1400 340, 1600 220 L 1600 0 L -100 0 Z"
+        fill="url(#wave-gradient-2)" opacity="0.35" />
+      <defs>
+        <linearGradient id="wave-gradient-1" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stop-color="#38bdf8" />
+          <stop offset="50%" stop-color="#818cf8" />
+          <stop offset="100%" stop-color="#c084fc" />
+        </linearGradient>
+        <linearGradient id="wave-gradient-2" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stop-color="#0ea5e9" />
+          <stop offset="60%" stop-color="#a855f7" />
+          <stop offset="100%" stop-color="#ec4899" />
+        </linearGradient>
+      </defs>
+    </svg>
+  </div>
+
+  <!-- NAVBAR -->
+  <header class="navbar">
+    <a href="/" class="logo">
+      <div class="logo-soundwave">
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+      <span class="logo-text">AudioTools<span class="logo-dot-ai">.ai</span></span>
+    </a>
+
+    <div class="nav-actions">
+      <a href="/" class="nav-btn">
+        <span>← Back to Home</span>
+      </a>
+
+      <button class="nav-btn theme-toggle-btn" id="themeToggle" title="Toggle Theme">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"
+          stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="5"></circle>
+          <line x1="12" y1="1" x2="12" y2="3"></line>
+          <line x1="12" y1="21" x2="12" y2="23"></line>
+          <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+          <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+          <line x1="1" y1="12" x2="3" y2="12"></line>
+          <line x1="21" y1="12" x2="23" y2="12"></line>
+          <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+          <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+        </svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- MAIN CONTAINER -->
+  <main class="tool-container">
+    <div class="tool-header-block">
+      <span class="tool-badge-pill">🎤 2-TRACK ISOLATION</span>
+      <h1>Vocal Remover</h1>
+      <p>Remove vocals from any song and extract crystal-clear acapella and instrumental backing.</p>
+    </div>
+
+    <!-- UPLOAD CARD -->
+    <div class="tool-upload-box" id="uploadCard">
+      <div class="tool-upload-top">
+        <div class="tool-icon-squircle icon-purple">
+          <svg viewBox="0 0 24 24" width="26" height="26" fill="currentColor">
+            <rect x="4" y="9" width="2.5" height="6" rx="1.25"></rect>
+            <rect x="8.5" y="5" width="2.5" height="14" rx="1.25"></rect>
+            <rect x="13" y="2" width="2.5" height="20" rx="1.25"></rect>
+            <rect x="17.5" y="8" width="2.5" height="8" rx="1.25"></rect>
+          </svg>
+        </div>
+        <div>
+          <h3>Upload Audio File</h3>
+          <p>Supports MP3, WAV, FLAC, AAC, MP4 up to 100MB</p>
+        </div>
+      </div>
+
+      <input type="file" id="audioInput" accept="audio/*,video/*" hidden>
+
+      <div class="inner-drop-area" id="dropZone">
+        <svg class="cloud-icon" id="uploadIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+          stroke-linecap="round" stroke-linejoin="round">
+          <path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"></path>
+          <polyline points="12 12 12 16"></polyline>
+          <polyline points="9 13 12 10 15 13"></polyline>
+        </svg>
+        <div class="drop-title" id="fileText">Drag & drop an audio file here</div>
+        <div class="drop-subtitle">or click to browse</div>
+      </div>
+
+      <button id="actionBtn" class="btn-action-purple">
+        <span>🎵 Choose Audio File</span>
+      </button>
+    </div>
+
+    <!-- PROCESSING PANEL -->
+    <div class="processing-card hidden" id="processing">
+      <div class="loader-spinner" id="loader"></div>
+
+      <div class="success-tick hidden" id="uploadTick">
+        <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.5"
+          stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="20 6 9 17 4 12"></polyline>
+        </svg>
+      </div>
+
+      <div class="status-text" id="statusText">Uploading audio…</div>
+      <div class="hint-text" id="hintText">AI is separating vocals. Please wait…</div>
+
+      <div class="progress-track hidden" id="progressWrapper">
+        <div class="progress-bar-bg">
+          <div class="progress-fill-bar" id="progressFill"></div>
+        </div>
+        <div class="progress-meta">
+          <span>AI Neural Separation</span>
+          <span id="progressPercent">0%</span>
+        </div>
+        <div class="estimated-time-box" id="estimatedTime">
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"></circle>
+            <polyline points="12 6 12 12 16 14"></polyline>
+          </svg>
+          <span>Est. time remaining: <strong id="timerSeconds">~25s</strong></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- RESULTS (STUDIO RACK) -->
+    <div class="results-container hidden" id="results">
+      <div class="results-header-row">
+        <h3>Separated Stems</h3>
+        <button id="resetBtn" class="btn-reset-light">
+          <span>↺ Split Another Song</span>
+        </button>
+      </div>
+
+      <!-- VOCALS TRACK -->
+      <div class="track-channel-card card-vocals-border" id="card-vocals">
+        <div class="track-channel-controls">
+          <button class="track-btn-ctrl mute-btn" onclick="toggleMute('vocals')">M</button>
+          <button class="track-btn-ctrl solo-btn" onclick="toggleSolo('vocals')">S</button>
+        </div>
+        <div class="track-channel-main">
+          <div class="track-channel-info">
+            <span class="track-channel-title vocal-color">🎤 Vocals (Acapella)</span>
+            <div class="track-audio-row">
+              <button class="play-toggle-btn" id="play-vocals" onclick="togglePlay('vocals')">▶</button>
+              <div id="waveform-vocals" class="waveform-box"></div>
+            </div>
+          </div>
+          <a href="/download/vocals" class="download-action-btn">Download</a>
+        </div>
+      </div>
+
+      <!-- INSTRUMENTS TRACK -->
+      <div class="track-channel-card card-inst-border" id="card-inst">
+        <div class="track-channel-controls">
+          <button class="track-btn-ctrl mute-btn" onclick="toggleMute('inst')">M</button>
+          <button class="track-btn-ctrl solo-btn" onclick="toggleSolo('inst')">S</button>
+        </div>
+        <div class="track-channel-main">
+          <div class="track-channel-info">
+            <span class="track-channel-title inst-color">🎵 Instrumental (Backing)</span>
+            <div class="track-audio-row">
+              <button class="play-toggle-btn" id="play-inst" onclick="togglePlay('inst')">▶</button>
+              <div id="waveform-inst" class="waveform-box"></div>
+            </div>
+          </div>
+          <a href="/download/instrumental" class="download-action-btn">Download</a>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- FEATURES / TRUST STRIP -->
+  <section class="features-strip" style="margin-top: 20px;">
+    <div class="feature-item">
+      <div class="feature-icon-box">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
+          <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+        </svg>
+      </div>
+      <div class="feature-text-group">
+        <h5>Fast Processing</h5>
+        <p>Get results Quick.</p>
+      </div>
+    </div>
+
+    <div class="feature-item">
+      <div class="feature-icon-box">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2"
+          stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+        </svg>
+      </div>
+      <div class="feature-text-group">
+        <h5>100% Open Source</h5>
+        <p>Source code on GitHub.</p>
+      </div>
+    </div>
+
+    <div class="feature-item">
+      <div class="feature-icon-box">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
+          <path
+            d="M18.6 6.62c-1.44 0-2.8.56-3.77 1.53L12 10.98l-2.83-2.83A5.32 5.32 0 0 0 5.4 6.62C2.42 6.62 0 9.04 0 12.02s2.42 5.4 5.4 5.4c1.44 0 2.8-.56 3.77-1.53L12 13.06l2.83 2.83c.97.97 2.33 1.53 3.77 1.53 2.98 0 5.4-2.42 5.4-5.4s-2.42-5.4-5.4-5.4zM5.4 15.42c-1.87 0-3.4-1.53-3.4-3.4s1.53-3.4 3.4-3.4c.91 0 1.77.35 2.4 1l2.4 2.4-2.4 2.4c-.63.65-1.49 1-2.4 1zm13.2 0c-.91 0-1.77-.35-2.4-1l-2.4-2.4 2.4-2.4c.63-.65 1.49-1 2.4-1 1.87 0 3.4 1.53 3.4 3.4s-1.53 3.4-3.4 3.4z" />
+        </svg>
+      </div>
+      <div class="feature-text-group">
+        <h5>No Sign Up</h5>
+        <p>Free to use, forever.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- UNIVERSAL FOOTER -->
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-left">
+        <span class="footer-brand">AudioTools.ai</span>
+        <span class="footer-tagline">• Free AI audio processing suite</span>
+      </div>
+
+      <div class="footer-nav">
+        <a href="/">Home</a>
+        <a href="/vocal-remover">Vocal Remover</a>
+        <a href="/splitter">Stem Splitter</a>
+        <a href="https://github.com/sarthakatkare20/Audiotools.ai" target="_blank">GitHub</a>
+      </div>
+    </div>
+
+    <div class="ai-disclaimer-bar">
+      <span>⚠️ <strong>Disclaimer:</strong> AudioTools.ai is powered by experimental AI neural models and can
+        occasionally make mistakes or produce separation artifacts.</span>
+    </div>
+
+    <div class="footer-bottom-bar">
+      <span>© 2026 AudioTools.ai • MIT License</span>
+      <span>Powered by Demucs v4 Deep Learning</span>
+    </div>
+  </footer>
+
+  <script src="{{ url_for('static', filename='js/home.js') }}?v=5"></script>
+  <script src="{{ url_for('static', filename='js/vocal.js') }}?v=5"></script>
+</body>
+
+</html>

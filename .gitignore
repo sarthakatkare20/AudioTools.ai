@@ -1,0 +1,53 @@
+# Python & Virtual Environments
+venv/
+.venv/
+env/
+ENV/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.pyz
+.pytest_cache/
+.coverage
+
+# Temporary audio processing directories & test files
+uploads/*
+!uploads/.gitkeep
+temp/*
+!temp/.gitkeep
+separated/*
+!separated/.gitkeep
+downloads/*
+outputs/*
+jobs/*
+*.wav
+*.mp3
+*.flac
+*.aac
+*.ogg
+
+# Local Demucs / PyTorch model caches
+models/
+.cache/
+torch_cache/
+
+# Environment variables & secrets
+.env
+.env.local
+*.env
+
+# IDE & Editor files
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# OS junk files
+.DS_Store
+Thumbs.db
+desktop.ini
+*.log
+
+# Large media files (keep demo video optional or tracked)
+# static/video/*.mp4
